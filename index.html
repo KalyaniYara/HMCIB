@@ -259,9 +259,9 @@ window.addEventListener("load", async () => {
                         maximum: 30,
                        description: "The mortgage loan term length in years (typically between 1 and 30)."
                     }
-                    required:["numberOfApplications","totalAnnualIncome","numberOfDependants", "monthlyExpenditure","lengthOfTerm"]
+                   
             },
-
+             required:["numberOfApplications","totalAnnualIncome","numberOfDependants", "monthlyExpenditure","lengthOfTerm"]
             execute: async (args) => {
 
                 console.log("Tool called");
