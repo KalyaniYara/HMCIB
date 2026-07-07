@@ -201,51 +201,106 @@ button:hover {
 </div>
 
 <script>
-// Populate 3-40 years
-const termDropdown = document.getElementById("term");
+    <script>
+async function registerMortgageTool() {
 
-for(let i = 3; i <= 40; i++) {
-    const option = document.createElement("option");
-    option.value = i;
-    option.textContent = `${i} Years`;
-    termDropdown.appendChild(option);
-}
-
-// Sample calculation
-document.getElementById("mortgageForm")
-.addEventListener("submit", function(e){
-
-    e.preventDefault();
-
-    const income =
-        parseFloat(document.getElementById("income").value) || 0;
-
-    const expenditure =
-        parseFloat(document.getElementById("expenditure").value) || 0;
-
-    const dependants =
-        parseInt(document.getElementById("dependants").value) || 0;
-
-    const applicants =
-        parseInt(document.querySelector(
-            'input[name="applicants"]:checked'
-        ).value);
-
-    // Example affordability logic
-    let borrowing = (income * 4.5);
-
-    if(applicants === 2){
-        borrowing *= 1.1;
+    if (!document.modelContext) {
+        console.log("WebMCP not available");
+        return;
     }
 
-    borrowing -= (dependants * 10000);
-    borrowing -= (expenditure * 12);
+    await document.modelContext.registerTool({
+        name: "calculate_mortgage",
+        description: "Calculate mortgage borrowing amount based on income, dependants, expenditure and mortgage term.",
 
-    borrowing = Math.max(0, borrowing);
+        inputSchema: {
+            type: "object",
+            properties: {
+                applicants: {
+                    type: "number",
+                    enum: [1, 2],
+                    description: "Number of applicants"
+                },
+                annualIncome: {
+                    type: "number",
+                    description: "Total annual income before tax"
+                },
+                dependants: {
+                    type: "number",
+                    minimum: 0,
+                    maximum: 9
+                },
+                monthlyExpenditure: {
+                    type: "number"
+                },
+                termYears: {
+                    type: "number",
+                    minimum: 3,
+                    maximum: 40
+                }
+            },
+            required: [
+                "applicants",
+                "annualIncome",
+                "monthlyExpenditure",
+                "termYears"
+            ]
+        },
 
-    document.getElementById("result").innerHTML =
-        `Estimated Borrowing Amount: £${borrowing.toLocaleString()}`;
-});
+        execute: async ({
+            applicants,
+            annualIncome,
+            dependants = 0,
+            monthlyExpenditure,
+            termYears
+        }) => {
+
+            // Populate UI
+            document.querySelector(
+                `input[name="applicants"][value="${applicants}"]`
+            ).checked = true;
+
+            document.getElementById("income").value =
+                annualIncome;
+
+            document.getElementById("dependants").value =
+                dependants;
+
+            document.getElementById("expenditure").value =
+                monthlyExpenditure;
+
+            document.getElementById("term").value =
+                termYears;
+
+            // Mortgage calculation
+            let borrowing = annualIncome * 4.5;
+
+            if (applicants === 2) {
+                borrowing *= 1.1;
+            }
+
+            borrowing -= dependants * 10000;
+            borrowing -= monthlyExpenditure * 12;
+
+            borrowing = Math.max(0, borrowing);
+
+            document.getElementById("result").innerHTML =
+                `Estimated Borrowing Amount: £${borrowing.toLocaleString()}`;
+
+            return {
+                borrowingAmount: borrowing,
+                termYears: termYears,
+                applicants: applicants,
+                success: true
+            };
+        }
+    });
+
+    console.log("Mortgage tool registered");
+}
+
+registerMortgageTool();
+</script>
 </script>
 
 </body>
