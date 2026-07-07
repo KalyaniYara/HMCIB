@@ -209,112 +209,60 @@ button:hover {
 </div>
 
 <script>
-/*
-    Populate mortgage term dropdown: 3 years to 40 years
-*/
-const termDropdown = document.getElementById("term");
 
-for (let i = 3; i <= 40; i++) {
-    const option = document.createElement("option");
-    option.value = i;
-    option.textContent = `${i} Years`;
-    termDropdown.appendChild(option);
-}
+window.addEventListener("load", async () => {
 
-/*
-    Common mortgage calculation function
-*/
-function calculateBorrowingAmount({
-    applicants = 1,
-    annualIncome = 0,
-    dependants = 0,
-    monthlyExpenditure = 0,
-    termYears = 25
-}) {
-    applicants = Number(applicants) || 1;
-    annualIncome = Number(annualIncome) || 0;
-    dependants = Number(dependants) || 0;
-    monthlyExpenditure = Number(monthlyExpenditure) || 0;
-    termYears = Number(termYears) || 25;
+    console.log("Page Loaded");
 
-    if (applicants !== 1 && applicants !== 2) {
-        throw new Error("Applicants must be either 1 or 2.");
+    if (!document.modelContext) {
+        console.error("modelContext not available");
+        return;
     }
 
-    if (dependants < 0 || dependants > 9) {
-        throw new Error("Dependants must be between 0 and 9.");
+    console.log("modelContext found");
+
+    try {
+
+        await document.modelContext.registerTool({
+
+            name: "mortgage_tool",
+
+            description: "Mortgage calculator",
+
+            inputSchema: {
+                type: "object",
+                properties: {
+                    annualIncome: {
+                        type: "number"
+                    }
+                }
+            },
+
+            execute: async (args) => {
+
+                console.log("Tool called");
+                console.log(args);
+
+                return {
+                    success: true
+                };
+            }
+        });
+
+        console.log("Tool Registered Successfully");
+
+        const tools =
+            await document.modelContext.getTools();
+
+        console.log("Registered Tools");
+        console.log(tools);
+
+    }
+    catch (err) {
+
+        console.error("Registration Error");
+        console.error(err);
     }
 
-    if (termYears < 3 || termYears > 40) {
-        throw new Error("Term years must be between 3 and 40.");
-    }
-
-    if (annualIncome < 0 || monthlyExpenditure < 0) {
-        throw new Error("Income and expenditure cannot be negative.");
-    }
-
-    let borrowing = annualIncome * 4.5;
-
-    if (applicants === 2) {
-        borrowing *= 1.1;
-    }
-
-    borrowing -= dependants * 10000;
-    borrowing -= monthlyExpenditure * 12;
-
-    borrowing = Math.max(0, borrowing);
-
-    return borrowing;
-}
-
-/*
-    Update UI fields
-*/
-function updateMortgageUI({
-    applicants = 1,
-    annualIncome = 0,
-    dependants = 0,
-    monthlyExpenditure = 0,
-    termYears = 25,
-    borrowingAmount = 0
-}) {
-    const applicantRadio = document.querySelector(
-        `input[name="applicants"][value="${applicants}"]`
-    );
-
-    if (applicantRadio) {
-        applicantRadio.checked = true;
-    }
-
-    const incomeField = document.getElementById("income");
-    const dependantsField = document.getElementById("dependants");
-    const expenditureField = document.getElementById("expenditure");
-    const termField = document.getElementById("term");
-    const resultDiv = document.getElementById("result");
-
-    if (incomeField) {
-        incomeField.value = annualIncome;
-    }
-
-    if (dependantsField) {
-        dependantsField.value = dependants;
-    }
-
-    if (expenditureField) {
-        expenditureField.value = monthlyExpenditure;
-    }
-
-    if (termField) {
-        termField.value = termYears;
-    }
-
-    if (resultDiv) {
-        resultDiv.classList.remove("error");
-        resultDiv.innerHTML =
-            `Estimated Borrowing Amount: £${borrowingAmount.toLocaleString()}`;
-    }
-}
-
-/*
-    Normal button submit calculation
-*/
+});
+</script>
