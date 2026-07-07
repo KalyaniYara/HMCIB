@@ -255,9 +255,9 @@ window.addEventListener("load", async () => {
                     },
                     lengthOfTerm:{
                         type: "integer",
-                       minimum: 1,
-                        maximum: 30,
-                       description: "The mortgage loan term length in years (typically between 1 and 30)."
+                       minimum: 3,
+                        maximum: 48,
+                       description: "morrtgage loan term length in years (3 to 48 years)."
                     }
                    
             },
@@ -322,13 +322,19 @@ window.addEventListener("load", async () => {
     }
 
     // Populate Length Of Term Dropdown
-    const termField =
-        document.getElementById("term");
+   // Populate Length of Term dropdown (3 - 48 years)
 
-    if (termField) {
-        termField.value =
-            lengthOfTerm;
-    }
+const termDropdown = document.getElementById("term");
+
+for (let year = 3; year <= 48; year++) {
+
+    const option = document.createElement("option");
+
+    option.value = year;
+    option.textContent = `${year} Years`;
+
+    termDropdown.appendChild(option);
+}
 
     // Optional: Trigger Calculate button automatically
     document.querySelector(
