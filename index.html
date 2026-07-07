@@ -232,12 +232,35 @@ window.addEventListener("load", async () => {
             inputSchema: {
                 type: "object",
                 properties: {
-                    annualIncome: {
+                   numberOfApplications:{
+                       type: "integer",
+                       enum: [1,2],
+                       description: "The number of people applying for the loan."
+                   },
+                    totalAnnualIncome:{
                         type: "number",
-                        description: "The annual income of the applicant (e.g., 200000)"
+                       minimum: 1,
+                       description: "The number of income before tax is raw number. Instruct the LLM to strip out commas or
+                           currency formatting (e.g., pass  200000 insted of 2,00,000)"
+                    },
+                    numberOfDependants:{
+                        type: "integer",
+                        minimum: 0,
+                       default: 0,
+                       description: "The number of financial dependants. Defaults to 0 if not specified"
+                    },
+                    monthlyExpenditure:{
+                        type: "number",
+                       minimum: 0,
+                       description: "The total monthly expenditure is a raw number (e.g., 25000)."
+                    },
+                    lengthOfTerm:{
+                        type: "integer",
+                       minimum: 1,
+                        maximum: 30,
+                       description: "The mortgage loan term length in years (typically between 1 and 30)."
                     }
-                },
-                required: ["annualIncome"]
+                    required:["numberOfApplications","totalAnnualIncome","numberOfDependants", "monthlyExpenditure","lengthOfTerm"]
             },
 
             execute: async (args) => {
