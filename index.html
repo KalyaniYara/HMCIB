@@ -263,15 +263,90 @@ window.addEventListener("load", async () => {
             },
              required:["numberOfApplications","totalAnnualIncome","numberOfDependants", "monthlyExpenditure","lengthOfTerm"]
             },
-            execute: async (args) => {
+           execute: async (args) => {
 
-                console.log("Tool called");
-                console.log(args);
+    console.log("Tool called");
+    console.log(args);
 
-                return {
-                    success: true
-                };
-            }
+    // Extract values
+    const numberOfApplications =
+        Number(args.numberOfApplications || 1);
+
+    const totalAnnualIncome =
+        Number(args.totalAnnualIncome || 0);
+
+    const numberOfDependants =
+        Number(args.numberOfDependants || 0);
+
+    const monthlyExpenditure =
+        Number(args.monthlyExpenditure || 0);
+
+    const lengthOfTerm =
+        Number(args.lengthOfTerm || 25);
+
+    // Populate Applicant Radio Button
+    const radioButton =
+        document.querySelector(
+            `input[name="applicants"][value="${numberOfApplications}"]`
+        );
+
+    if (radioButton) {
+        radioButton.checked = true;
+    }
+
+    // Populate Income Field
+    const incomeField =
+        document.getElementById("income");
+
+    if (incomeField) {
+        incomeField.value =
+            totalAnnualIncome;
+    }
+
+    // Populate Dependants Dropdown
+    const dependantField =
+        document.getElementById("dependants");
+
+    if (dependantField) {
+        dependantField.value =
+            numberOfDependants;
+    }
+
+    // Populate Monthly Expenditure
+    const expenditureField =
+        document.getElementById("expenditure");
+
+    if (expenditureField) {
+        expenditureField.value =
+            monthlyExpenditure;
+    }
+
+    // Populate Length Of Term Dropdown
+    const termField =
+        document.getElementById("term");
+
+    if (termField) {
+        termField.value =
+            lengthOfTerm;
+    }
+
+    // Optional: Trigger Calculate button automatically
+    document.querySelector(
+        '#mortgageForm button[type="submit"]'
+    )?.click();
+
+    return {
+        success: true,
+        message: "Mortgage form populated successfully",
+        populatedValues: {
+            numberOfApplications,
+            totalAnnualIncome,
+            numberOfDependants,
+            monthlyExpenditure,
+            lengthOfTerm
+        }
+    };
+}
         });
 
         console.log("Tool Registered Successfully");
