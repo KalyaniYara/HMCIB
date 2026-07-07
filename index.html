@@ -212,14 +212,36 @@ button:hover {
 
 window.addEventListener("load", async () => {
 
+    
+const termDropdown = document.getElementById("term");
+
+    if (termDropdown) {
+
+        // Clear existing options except first one
+        termDropdown.innerHTML =
+            '<option value="">Select Term</option>';
+
+        for (let year = 3; year <= 48; year++) {
+
+            const option =
+                document.createElement("option");
+
+            option.value = year;
+            option.textContent = `${year} Years`;
+
+            termDropdown.appendChild(option);
+        }
+
+        console.log("Term dropdown populated");
+    }
+
+    // Your existing WebMCP code starts here
     console.log("Page Loaded");
 
     if (!document.modelContext) {
         console.error("modelContext not available");
         return;
     }
-
-    console.log("modelContext found");
 
     try {
 
